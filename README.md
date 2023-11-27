@@ -6,7 +6,7 @@ that are more common and familiar words.
 #2 If you allow any word to be entered, then someone will just enter all vowels, etc. to quickly solve.  So I made the game accept only
 allowable real words.  If you just use the large list to select the secret word, then you will end up with some really arcane and
 unusual words that most people never heard of to solve.  So the game needs to pick words from the shorter more common word list.
-#3 - if you look at the original games, both had little flaws or things missing. so most of my improvements were minor and just
+#3 - if you look at the original games above, both had little flaws or things missing. so most of my improvements were minor and just
 making the game more like the official one at wordlegame.org or the one on the NY Times website.
 #4 baraltech's version had indicators of which letters were used at the bottom of the screen.  gunnar50's version was more accurate
 at displaying colors if the word had two of the same letters, but did not have the indicator keyboard at the bottom, so this version
