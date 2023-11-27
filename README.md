@@ -11,3 +11,5 @@ making the game more like the official one at wordlegame.org or the one on the N
 #4 baraltech's version had indicators of which letters were used at the bottom of the screen.  gunnar50's version was more accurate
 at displaying colors if the word had two of the same letters, but did not have the indicator keyboard at the bottom, so this version
 incorporates the best features of both games and cleans up some little nagging issues
+$5 - I'm a novice python programmer and this is my first attempt at pygame.  So, if you have better ways of coding this, I would appreciate
+your feedback.
