@@ -1,7 +1,7 @@
 # wordle_game
 Wordle! game written in python with pygame.
 I used code from https://github.com/Gunnar50/Wordle_game and https://github.com/baraltech/Wordle-PyGame and made some improvements
-#1 - Wordle! as first published uses two word lists.  A large one of 13K words that are acceptable and a smaller one 2K of answers
+#1 - Wordle! as first published uses two word lists.  A large one of about 13K words that are acceptable and a smaller one about 2K of answers
 that are more common and familiar words. 
 #2 If you allow any word to be entered, then someone will just enter all vowels, etc. to quickly solve.  So I made the game accept only
 allowable real words.  If you just use the large list to select the secret word, then you will end up with some really arcane and
