@@ -40,7 +40,7 @@ class UIElement:
         font = pygame.font.SysFont("Consolas", self.font_size)
         self.original_surface = font.render(self.text, True, self.colour)
         self.text_surface = self.original_surface.copy()
-        # this surface is used to adjust the alpha of the text_surface
+        # This surface is used to adjust the alpha of the text_surface
         self.alpha_surface = pygame.Surface(self.text_surface.get_size(), pygame.SRCALPHA)
 
     def draw(self, screen):

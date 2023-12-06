@@ -1,9 +1,10 @@
 # main.py - Wordle game written in Pygame 
-# Improvements by Art@AbingtonPro.com 11/27/2023
-# Credits (I got the basic code and ideas from these YouTube channels):
+# Improvements by Art@AbingtonPro.com 12/06/2023
+# Credits - I got the basic code and ideas from these YouTube channels:
 #   https://www.youtube.com/@techandgaming0
 #   https://www.youtube.com/@baraltech
 # Many thanks to the above and others who post about python and pygame on YouTube.com
+# Also thanks to ChatGPT for suggesting some code found in analyze_wordle_guess
 # I hope to eventually post some videos on the improvements on this channel https://www.youtube.com/@abingtonpro
 
 import random
@@ -11,6 +12,10 @@ from time import *
 import pygame
 from settings import *
 from sprites import *
+import os
+
+def clear_console():
+    os.system('cls')
 
 class Game:
     def __init__(self):
@@ -18,8 +23,8 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(title)
         self.clock = pygame.time.Clock()
-        self.letters_text = UIElement(165, 100, "Not Enough Letters", MAGENTA, 25)
-        self.not_valid_text = UIElement(165, 100, " Not a Valid Word", MAGENTA, 25)
+        self.letters_text = UIElement(170, 100, "Not Enough Letters", MAGENTA, 25)
+        self.not_valid_text = UIElement(137, 100, " Not a Valid Game Word", MAGENTA, 25)
         self.title_text = UIElement(122, 20, "Wordle Game", BRIGHTYELLOW, 60)
         self.title_subtext = UIElement(70, 75, "Solve a 5-letter word in 6 tries", BRIGHTYELLOW, 25)
         self.create_answers_list()
@@ -34,10 +39,16 @@ class Game:
             self.allwords_list = file.read().splitlines()
 
     def new(self):
-        #self.word = "SPEED"
         self.word = random.choice(self.answers_list).upper()
+        # Uncomment next line for testing
+        #print("  The secret word is", self.word)
+
+        clear_console()
         print()
-        print("The secret word is", self.word)
+        print("  Don't close this window while game is running.")
+        print('  Minimizing it is OK.')
+        print()
+        
         self.text = ""
         self.current_row = 0
         self.tiles = []
@@ -45,6 +56,7 @@ class Game:
         self.flip = True
         self.not_enough_letters = False
         self.not_valid_word = False
+        self.new_game_text = True
         self.create_answers_list
         self.darkgrey_letters = []
         self.yellow_letters   = []
@@ -70,11 +82,11 @@ class Game:
         self.add_letter()
 
     def add_letter(self):
-        #empty all the letters in the current row
+        # Empty all the letters in the current row
         for tile in self.tiles[self.current_row]:
             tile.letter = ''
 
-        # add the letters typed to the current row
+        # Add the letters typed to the current row
         for i, letter in enumerate(self.text):
             self.tiles[self.current_row][i].letter = letter
             self.tiles[self.current_row][i].create_font()
@@ -119,7 +131,7 @@ class Game:
     def draw(self):
         self.screen.fill(BGCOLOUR)
        
-        # display not enough letters text
+        # Display not enough letters text
         if self.not_enough_letters:
             self.timer += 1
             self.letters_text.fade_in()
@@ -137,7 +149,7 @@ class Game:
                 self.timer = 0
         else:
             self.not_valid_text.fade_out()
- 
+
         self.letters_text.draw(self.screen)
         self.not_valid_text.draw(self.screen)
         self.title_text.fade_in()
@@ -149,8 +161,8 @@ class Game:
         pygame.display.flip()
 
     def row_animation(self):
-        #row shaking if not enough letters
-        #self.not_enough_letters = True ## moved to:  # row animation, not enough letters message
+        # Row shaking if not enough letters
+        # Self.not_enough_letters = True ## moved to:  # row animation, not enough letters message
         start_pos = self.tiles[0][0].x
         amount_move = 4
         move = 3
@@ -183,7 +195,7 @@ class Game:
                 break
 
     def box_animation(self):
-        # tile scale animation for every letter inserted
+        # Tile scale animation for every letter inserted
         for tile in self.tiles[self.current_row]:
             if tile.letter == "":
                 screen_copy = self.screen.copy()
@@ -204,7 +216,7 @@ class Game:
                 break
 
     def reveal_animation(self, tile, colour):
-        # reveal colours animation when user inputs the entire word
+        # Reveal colours animation when user inputs the entire word
         screen_copy = self.screen.copy()
 
         while True:
@@ -236,22 +248,51 @@ class Game:
                 break
 
     def check_letters(self):
-        # algorithm to determine if letters correspond to the letters in the actual word
-        # and to assign a color GREY, YELLOW, or GREEN.
-        copy_word = [x for x in self.word]
-        for i, user_letter in enumerate(self.text):
-            colour = DARKGREY
-            self.darkgrey_letters.append(user_letter)
-            for j, letter in enumerate(copy_word):
-                if user_letter == letter:
-                    colour = YELLOW
-                    self.yellow_letters.append(user_letter)
-                    if i == j:
-                        colour = GREEN
-                        self.green_letters.append(user_letter)
-                    copy_word[j] = ""
-                    break
-            # reveal animation
+        
+        def analyze_wordle_guess(secret_word, guess_word, guess_colours):
+            # The login in this function created by ChatGPT
+            correct_colours = 0
+            correct_positions = 0
+            # Set all the letter positions to black - B=black  G=green  Y=yellow
+            guess_colours = ['B','B','B','B','B']
+            # Create a copy of the secret word to keep track of used positions
+            secret_word_copy = list(secret_word)
+
+            # Check for correct colours and positions
+            for i in range(len(secret_word)):
+                if guess_word[i] == secret_word[i]:
+                    correct_positions += 1
+                    guess_colours[i] = 'G'
+                    secret_word_copy[i] = ''  # Mark the position as used
+
+            # Check for correct colours in the wrong position
+            for i in range(len(secret_word)):
+                if guess_word[i] != secret_word[i] and guess_word[i] in secret_word_copy:
+                    correct_colours += 1
+                    guess_colours[i] = 'Y'
+                    # Mark the position as used to avoid double counting
+                    secret_word_copy[secret_word_copy.index(guess_word[i])] = ''
+
+            # Return correct_positions, correct_colours, guess_colours
+            return guess_colours
+
+        colour_results = []
+        colour_results = analyze_wordle_guess(self.word, self.text, colour_results)
+        for i in range(5):
+            colour = colour_results[i]
+            if colour == 'G':
+                colour = GREEN
+                # Add the letter to the keyboard indicator for green letters
+                self.green_letters.append(self.text[i])
+            if colour == 'Y':
+                colour = YELLOW
+                # Add the letter to the keyboard indicator for yellow letters
+                self.yellow_letters.append(self.text[i])
+            if colour == 'B':
+                colour = DARKGREY
+                # Add the letter to the keyboard indicator for dark grey letters
+                self.darkgrey_letters.append(self.text[i])
+            # Reveal animation
             self.reveal_animation(self.tiles[self.current_row][i], colour)
 
     def events(self):
@@ -264,23 +305,23 @@ class Game:
                 if event.key == pygame.K_RETURN:
                     if len(self.text) == 5:
                     
-                        # check if the word is in the accepted words 'allwords'
+                        # Check if the word is in the accepted words 'allwords'
                         if self.text.lower() in self.allwords_list:
                             
-                            # check all letters and place colors
+                            # Check all letters and place colors
                             self.check_letters()
 
-                            # check if the text is correct or the player has used all the turns
+                            # Check if the text is correct or the player has used all the turns
                             if self.text == self.word or self.current_row + 1 == 6:
-                                #player loses and losing message is sent
+                                # Player loses and losing message is sent
                                 if self.text != self.word:
                                     self.end_screen_text = UIElement(110, 720, f'THE WORD WAS "{self.word}"', CYAN, 35)
 
-                                # player wins and send winning message
+                                # Player wins and send winning message
                                 else:
                                     self.end_screen_text = UIElement(220, 720, "YOU WON!", BRIGHTYELLOW, 40)
 
-                                # restart the game
+                                # Restart the game
                                 self.playing = False
                                 self.end_screen()
                                 break
@@ -289,12 +330,12 @@ class Game:
                             self.text = ""
 
                         else:
-                             # reject word and display not_valid message
+                             # Reject word, row animation, and display not_valid message
                             self.not_valid_word = True
                             self.row_animation()
 
                     else:
-                        # row animation, not enough letters message
+                        # Row animation and display not enough letters message
                         self.not_enough_letters = True
                         self.row_animation()
                         
@@ -316,7 +357,8 @@ class Game:
                     quit(0)
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                    # Added enter on keypad: K_KP_ENTER 
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
                         self.darkgrey_letters = []
                         yellow_letters   = []
                         green_letters    = []
