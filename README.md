@@ -12,5 +12,5 @@ making the game more like the official one at wordlegame.org or the one on the N
 at displaying colors if the word had two of the same letters, but did not have the indicator keyboard at the bottom, so this version
 incorporates the best features of both games and cleans up some little nagging issues. To get the guess letter coloring correct I
 finally went to ChatGPT and it produced code that helped me get the guess letters the correct colors.
-$5 - I'm a novice python programmer and this is my first attempt at pygame.  So, if you have better ways of coding this, I would appreciate
+#5 - I'm a novice python programmer and this is my first attempt at pygame.  So, if you have better ways of coding this, I would appreciate
 your feedback.
